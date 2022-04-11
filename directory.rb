@@ -11,12 +11,25 @@ def input_students
   # while the name is not empty, repeat this code (loop)
   while !name.empty? do
     # adding the student hash to the array
-    @students << {name: name, cohort: :april}
+    add_student(name, "april")
     puts "Now we have #{@students.count} students"
     # another name from the user
     name = STDIN.gets.chomp
   end
+end
 
+def load_students(filename = "students.csv")
+  # opening the file for reading
+  file = File.open(filename, "r")
+  file.readlines.each do |line|
+    name, cohort = line.chomp.split(",")
+    add_student(name, cohort)
+  end
+  file.close
+end
+
+def add_student(name, cohort)
+  @students << {name: name, cohort: cohort.to_sym}
 end
 
 def print_header
@@ -68,13 +81,13 @@ end
 def interactive_menu
   loop do
     print_menu
-    process(gets.chomp)
+    process(STDIN.gets.chomp)
   end
 end
 
 def save_students
-  # opening the file for writing
-  file = File.open("students.csv", "w")
+  puts "Which file do you want to use?"
+  file = File.open(STDIN.gets.chomp, "w")
 
   #iterating over the array of students
   @students.each do |student|
@@ -85,20 +98,11 @@ def save_students
   file.close
 end
 
-def load_students(filename = "students.csv")
-  # opening the file for reading
-  file = File.open(filename, "r")
-  file.readlines.each do |line|
-  name, cohort = line.chomp.split(",")
-    @students << {name: name, cohort: cohort.to_sym}
-  end
-  file.close
-end
-
 def try_load_students
   filename = ARGV.first # the first argument from the command line
   return if filename.nil? # stop here if filename isn't given
   if File.exist?(filename) # if it exists
+    load_students(filename)
     puts "Loaded #{@students.count} from #{filename}"
   else # if it doesn't exists
     put "Sorry, #{filename} doesn't exist."
