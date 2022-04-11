@@ -1,3 +1,5 @@
+require "csv"
+CSV.read("students.csv")
 
 @students = [] # an empty array accessible to all methods
 
@@ -16,16 +18,6 @@ def input_students
     # another name from the user
     name = STDIN.gets.chomp
   end
-end
-
-def load_students(filename = "students.csv")
-  # opening the file for reading
-  file = File.open(filename, "r")
-  file.readlines.each do |line|
-    name, cohort = line.chomp.split(",")
-    add_student(name, cohort)
-  end
-  file.close
 end
 
 def add_student(name, cohort)
@@ -65,7 +57,7 @@ def process(selection)
   case selection
   when "1"
     input_students
-    puts "File was updetaed with new students."
+    puts "File was updated with new students."
   when "2"
     puts "List of the students:"
     show_students
@@ -87,6 +79,16 @@ def interactive_menu
     print_menu
     process(STDIN.gets.chomp)
   end
+end
+
+def load_students(filename = "students.csv")
+  # opening the file for reading
+  file = File.open(filename, "r")
+  file.readlines.each do |line|
+    name, cohort = line.chomp.split(",")
+    add_student(name, cohort)
+  end
+  file.close
 end
 
 def save_students
